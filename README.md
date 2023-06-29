@@ -9,8 +9,8 @@ platform = atmelavr
 board = uno
 framework = arduino
 ```
-
-## Branch: HelloWorld-Blinky 
+## Simple Projects
+### Branch: HelloWorld-Blinky 
 ```
 #include <Arduino.h>
 //Blinky - Hello World
@@ -39,7 +39,7 @@ void loop() {
 }
 ```
 
-## Branch: Button-Blinky 
+### Branch: Button-Blinky 
 ```
 #include <Arduino.h>
 //Press the Button to turn both LEDs ON/OFF
