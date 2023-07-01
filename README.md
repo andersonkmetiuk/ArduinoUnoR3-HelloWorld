@@ -27,6 +27,8 @@
 
 Documentation &rarr; [Arduino UNO R3](https://docs.arduino.cc/hardware/uno-rev3)
 
+Tutorials &rarr; [Built-in Examples](https://docs.arduino.cc/built-in-examples/)
+
 Configuring Visual Studio with [PlatformIO Extension](https://platformio.org/install/ide?install=vscode). Remember to set the **platform.ini** file with:
 ```
 [env:uno]
