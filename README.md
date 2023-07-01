@@ -19,7 +19,7 @@
 |  **Power Supply Connector** |            Barrel Plug           |
 |      **Main Processor**     |         ATmega328P 16 MHz        |
 |   **USB-Serial Processor**  |         ATmega16U2 16 MHz        |
-|        **Memory**       | 2KB SRAM, 32KB FLASH, 1KB EEPROM |
+|        **Memory**           | 2KB SRAM, 32KB FLASH, 1KB EEPROM |
 
 
 ---
