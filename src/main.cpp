@@ -3,11 +3,14 @@
 #define LED1 7 //LED Digital Port 7
 #define LED2 8 // LED Digital Port 8
 #define BUTTON1 9 // Button Digital Port 9
+#define RELAY 10
 
 // Variables will change:
-int ledState = HIGH;        // the current state of the output pin
+int led1State = LOW;        // the current state of the output pin
+int led2State = HIGH;
 int buttonState;            // the current reading from the input pin
 int lastButtonState = LOW;  // the previous reading from the input pin
+int relayState = LOW;
 
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
@@ -15,12 +18,18 @@ unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
 unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
 
 void setup() {
-
+  //output
   pinMode(LED1,OUTPUT);
   digitalWrite(LED1, LOW);
   pinMode(LED2,OUTPUT);
   digitalWrite(LED2, LOW);
+  pinMode(RELAY,OUTPUT);
+  digitalWrite(RELAY, LOW);
+  //input
   pinMode(BUTTON1, INPUT);
+
+
+  //serial
   Serial.begin(9600);
   while (!Serial) {
 
@@ -44,13 +53,25 @@ void loop() {
     Serial.println(incomingByte, DEC);
     if (incomingByte == 'a') // a = off
     {
-      ledState = 0;
-      Serial.println("LED state set to 0");
+      led1State = !led1State;
+      Serial.println("LED1 state changed");
     }
     else if (incomingByte == 's') // s = on
     {
-      ledState = 1;
-      Serial.println("LED state set to 1");
+      led2State = !led2State;
+      Serial.println("LED2 state changed");
+    }
+    else if (incomingByte == 'r') // relay control
+    {
+      relayState = !relayState;
+      Serial.println("Relay state changed");
+    }
+       else if (incomingByte == 'd') // change 3 states
+    {
+      relayState = !relayState;
+      led1State = !led1State;
+      led2State = !led2State;
+      Serial.println("Changed LED1 LED2 RELAY");
     }
     else
       Serial.println("Do Nothing");
@@ -75,15 +96,18 @@ void loop() {
 
       // only toggle the LED if the new button state is HIGH
       if (buttonState == HIGH) {
-        ledState = !ledState;
+        led1State = !led1State;
+        led2State = !led2State;
+        relayState = !relayState;
         Serial.println("Button pressed");
       }
     }
   }
 
   // set the LED:
-  digitalWrite(LED1, ledState);
-  digitalWrite(LED2, ledState);
+  digitalWrite(LED1, led1State);
+  digitalWrite(LED2, led2State);
+  digitalWrite(RELAY,relayState);
 
   // save the reading. Next time through the loop, it'll be the lastButtonState:
   lastButtonState = reading;
