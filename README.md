@@ -1,7 +1,30 @@
-# Uduino Uno R3 - Hello World
- Initial development for **Uduino Uno R3 V1.0**
+# Initial development for Uduino Uno R3
 
-<img src= https://docs.arduino.cc/static/bbceab04f8e0726194ef4dfe2457097f/image.svg width=300/>
+<div><img src= https://docs.arduino.cc/static/bbceab04f8e0726194ef4dfe2457097f/image.svg width=300 align="left" /></div>
+
+|          **Board**          |          Arduino UNO R3          |
+|:---------------------------:|:--------------------------------:|
+|        **Microcontroller**  |          ATmega328P              |
+|          **USB connector**  |         USB-B                    |
+|     **Built-in LED Pin**    |                13                |
+|     **Digital I/O Pins**    |                14                |
+|    **Analog input pins**    |                 6                |
+|         **PWM pins**        |                 6                |
+|           **UART**          |                Yes               |
+|           **I2C**           |                Yes               |
+|           **SPI**           |                Yes               |
+|       **I/O Voltage**       |                5V                |
+| **Input voltage (nominal)** |               7-12V              |
+|  **DC Current per I/O Pin** |               20 mA              |
+|  **Power Supply Connector** |            Barrel Plug           |
+|      **Main Processor**     |         ATmega328P 16 MHz        |
+|   **USB-Serial Processor**  |         ATmega16U2 16 MHz        |
+|        **Memory**       | 2KB SRAM, 32KB FLASH, 1KB EEPROM |
+
+
+---
+## Uduino Uno R3 V1.0
+
 Documentation &rarr; [Arduino UNO R3](https://docs.arduino.cc/hardware/uno-rev3)
 
 Configuring Visual Studio with [PlatformIO Extension](https://platformio.org/install/ide?install=vscode). Remember to set the **platform.ini** file with:
