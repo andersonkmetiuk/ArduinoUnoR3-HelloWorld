@@ -1,6 +1,8 @@
 # Uduino Uno R3 - Hello World
  Initial development for **Uduino Uno R3 V1.0**
 
+<img src= https://docs.arduino.cc/static/bbceab04f8e0726194ef4dfe2457097f/image.svg width=300/>
+Documentation &rarr; [Arduino UNO R3](https://docs.arduino.cc/hardware/uno-rev3)
 
 Configuring Visual Studio with [PlatformIO Extension](https://platformio.org/install/ide?install=vscode). Remember to set the **platform.ini** file with:
 ```
