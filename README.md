@@ -197,6 +197,9 @@ void setup() {
   digitalWrite(LED2, LOW);
   pinMode(BUTTON1, INPUT);
   Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
   Serial.println("Setup...");
 
 }
