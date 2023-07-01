@@ -1,2 +1,2 @@
 # Debounce Button
-Program for testing the debounce for the push button
+Program for testing the debounce for the push button.
