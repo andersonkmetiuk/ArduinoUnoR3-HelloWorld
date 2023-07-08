@@ -23,6 +23,10 @@
 
 
 ---
+
+<div><img src= assets/arduino-uno-complete-pinout.webp /></div>
+
+---
 ## Uduino Uno R3 V1.0
 
 Documentation &rarr; [Arduino UNO R3](https://docs.arduino.cc/hardware/uno-rev3)
