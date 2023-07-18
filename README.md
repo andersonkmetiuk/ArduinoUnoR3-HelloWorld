@@ -40,6 +40,14 @@ platform = atmelavr
 board = uno
 framework = arduino
 ```
+For Linux you might need to run this command
+```
+sudo apt-get install python3-venv
+```
+[Here's why](https://github.com/platformio/platformio-core-installer/issues/1774)
+
+---
+
 ## Simple Projects
 ### Branch: HelloWorld-Blinky 
 ```
