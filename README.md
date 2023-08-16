@@ -462,3 +462,6 @@ void loop() {
   while(1); /* Infinite loop. Will cause watchdog timeout and system reset. */
 }
 ```
+
+### Optimizing Code
+[This](https://docs.arduino.cc/learn/programming/memory-guide) is a very interesting article about memories. This also shows why is nice to use the [PROGMEM](https://www.arduino.cc/reference/en/language/variables/utilities/progmem/) to optmize RAM usage, because SRAM is 2kb only and Flash Memory is 32kb. So we can use Flash Memory to store some parts of the code while the program is running and we let the SRAM only for the critical things that the program needs.
