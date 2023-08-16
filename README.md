@@ -465,3 +465,10 @@ void loop() {
 
 ### Optimizing Code
 [This](https://docs.arduino.cc/learn/programming/memory-guide) is a very interesting article about memories. This also shows why is nice to use the [PROGMEM](https://www.arduino.cc/reference/en/language/variables/utilities/progmem/) to optmize RAM usage, because SRAM is 2kb only and Flash Memory is 32kb. So we can use Flash Memory to store some parts of the code while the program is running and we let the SRAM only for the critical things that the program needs.
+
+PROGMEM, which stands for Program Memory, can be used to store variable data into Flash memory space. But the use of PROGMEM presents one disadvantage: data read speed. Using RAM will provide a much faster data read speed, but PROGMEM, as it uses Flash memory, will be slower than RAM, given the same data size. Thus, it is essential to design code knowing which variables are crucial and which do not or have a lower priority.
+
+Another way to store data in Flash Memory is to use a Serial.print() or Serial.println() instruction with the use of the F() String wrapper around the literals. For example:
+```
+Serial.println(F("Hello World"));
+```
