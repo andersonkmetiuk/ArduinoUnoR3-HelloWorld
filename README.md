@@ -1,4 +1,4 @@
-# Initial development for Uduino Uno R3
+# Initial development for Arduino Uno R3
 
 <div><img src= assets/arduino-uno.svg width=300 align="left" /></div>
 
@@ -27,7 +27,7 @@
 <div><img src= assets/arduino-uno-complete-pinout.webp /></div>
 
 ---
-## Uduino Uno R3 V1.0
+## Arduino Uno R3 V1.0
 
 Documentation &rarr; [Arduino UNO R3](https://docs.arduino.cc/hardware/uno-rev3)
 
