@@ -1,115 +1,63 @@
+// Ping a remote server, also uses DHCP and DNS.
+// 2011-06-12 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
+
+#include <EtherCard.h>
 #include <Arduino.h>
-// defines
-#define LED1 7 //LED Digital Port 7
-#define LED2 8 // LED Digital Port 8
-#define BUTTON1 9 // Button Digital Port 9
-#define RELAY 10
 
-// Variables will change:
-int led1State = LOW;        // the current state of the output pin
-int led2State = HIGH;
-int buttonState;            // the current reading from the input pin
-int lastButtonState = LOW;  // the previous reading from the input pin
-int relayState = LOW;
+// ethernet interface mac address, must be unique on the LAN
+static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x31 };
 
-// the following variables are unsigned longs because the time, measured in
-// milliseconds, will quickly become a bigger number than can be stored in an int.
-unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
-unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
+byte Ethernet::buffer[700];
+static uint32_t timer;
 
-void setup() {
-  //output
-  pinMode(LED1,OUTPUT);
-  digitalWrite(LED1, LOW);
-  pinMode(LED2,OUTPUT);
-  digitalWrite(LED2, LOW);
-  pinMode(RELAY,OUTPUT);
-  digitalWrite(RELAY, LOW);
-  //input
-  pinMode(BUTTON1, INPUT);
-
-
-  //serial
-  Serial.begin(9600);
-  while (!Serial) {
-
-    ; // wait for serial port to connect. Needed for native USB port only
-
-  }
-  Serial.println("Setup...");
-
+// called when a ping comes in (replies to it are automatic)
+static void gotPinged (byte* ptr) {
+  ether.printIp(">>> ping from: ", ptr);
 }
 
-void loop() {
-  //SERIAL
-  char incomingByte=0;
-  // reply only when you receive data:
-  if (Serial.available() > 0) {
-    // read the incoming byte:
-    incomingByte = Serial.read();
+void setup () {
+  Serial.begin(57600);
+  Serial.println("\n[pings]");
+  
+  if (ether.begin(sizeof Ethernet::buffer, mymac) == 0)
+    Serial.println(F("Failed to access Ethernet controller"));
+  if (!ether.dhcpSetup())
+    Serial.println(F("DHCP failed"));
 
-    // say what you got:
-    Serial.print("I received: ");
-    Serial.println(incomingByte, DEC);
-    if (incomingByte == 'a') // a = off
-    {
-      led1State = !led1State;
-      Serial.println("LED1 state changed");
-    }
-    else if (incomingByte == 's') // s = on
-    {
-      led2State = !led2State;
-      Serial.println("LED2 state changed");
-    }
-    else if (incomingByte == 'r') // relay control
-    {
-      relayState = !relayState;
-      Serial.println("Relay state changed");
-    }
-       else if (incomingByte == 'd') // change 3 states
-    {
-      relayState = !relayState;
-      led1State = !led1State;
-      led2State = !led2State;
-      Serial.println("Changed LED1 LED2 RELAY");
-    }
-    else
-      Serial.println("Do Nothing");
+  ether.printIp("IP:  ", ether.myip);
+  ether.printIp("GW:  ", ether.gwip);
 
-  }
-  // DEBOUNCE
-  int reading = digitalRead(BUTTON1);
-
-  // If the switch changed, due to noise or pressing:
-  if (reading != lastButtonState) {
-    // reset the debouncing timer
-    lastDebounceTime = millis();
-  }
-
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
-    if (reading != buttonState) {
-      buttonState = reading;
-
-      // only toggle the LED if the new button state is HIGH
-      if (buttonState == HIGH) {
-        led1State = !led1State;
-        led2State = !led2State;
-        relayState = !relayState;
-        Serial.println("Button pressed");
-      }
-    }
-  }
-
-  // set the LED:
-  digitalWrite(LED1, led1State);
-  digitalWrite(LED2, led2State);
-  digitalWrite(RELAY,relayState);
-
-  // save the reading. Next time through the loop, it'll be the lastButtonState:
-  lastButtonState = reading;
+#if 1
+  // use DNS to locate the IP address we want to ping
+  if (!ether.dnsLookup(PSTR("www.google.com")))
+    Serial.println("DNS failed");
+#else
+  ether.parseIp(ether.hisip, "74.125.77.99");
+#endif
+  ether.printIp("SRV: ", ether.hisip);
+    
+  // call this to report others pinging us
+  ether.registerPingCallback(gotPinged);
+  
+  timer = -9999999; // start timing out right away
+  Serial.println();
 }
 
+void loop () {
+  word len = ether.packetReceive(); // go receive new packets
+  word pos = ether.packetLoop(len); // respond to incoming pings
+  
+  // report whenever a reply to our outgoing ping comes back
+  if (len > 0 && ether.packetLoopIcmpCheckReply(ether.hisip)) {
+    Serial.print("  ");
+    Serial.print((micros() - timer) * 0.001, 3);
+    Serial.println(" ms");
+  }
+  
+  // ping a remote server once every few seconds
+  if (micros() - timer >= 5000000) {
+    ether.printIp("Pinging: ", ether.hisip);
+    timer = micros();
+    ether.clientIcmpRequest(ether.hisip);
+  }
+}
