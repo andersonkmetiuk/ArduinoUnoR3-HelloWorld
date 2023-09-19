@@ -472,3 +472,6 @@ Another way to store data in Flash Memory is to use a Serial.print() or Serial.p
 ```
 Serial.println(F("Hello World"));
 ```
+[Here](https://playground.arduino.cc/Learning/Memory/) you can read more about it.
+
+When we use the standard ```Serial.print()``` it uses the SRAM for the string, so with a few prints and the SRAM is full (we only have *2kB* of SRAM). Using the ```F()``` it stores the string inside the FLASH memory (*32kB*), thus saving the SRAM space.
