@@ -1,115 +1,63 @@
+// Present a "Will be back soon web page", as stand-in webserver.
+// 2011-01-30 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
 #include <Arduino.h>
-// defines
-#define LED1 7 //LED Digital Port 7
-#define LED2 8 // LED Digital Port 8
-#define BUTTON1 9 // Button Digital Port 9
-#define RELAY 10
+#include <EtherCard.h>
 
-// Variables will change:
-int led1State = LOW;        // the current state of the output pin
-int led2State = HIGH;
-int buttonState;            // the current reading from the input pin
-int lastButtonState = LOW;  // the previous reading from the input pin
-int relayState = LOW;
+#define STATIC 1  // set to 1 to disable DHCP (adjust myip/gwip values below)
 
-// the following variables are unsigned longs because the time, measured in
-// milliseconds, will quickly become a bigger number than can be stored in an int.
-unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
-unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
+#if STATIC
+// ethernet interface ip address
+static byte myip[] = { 192,168,0,200 };
+// gateway ip address
+static byte gwip[] = { 192,168,0,1 };
+#endif
 
-void setup() {
-  //output
-  pinMode(LED1,OUTPUT);
-  digitalWrite(LED1, LOW);
-  pinMode(LED2,OUTPUT);
-  digitalWrite(LED2, LOW);
-  pinMode(RELAY,OUTPUT);
-  digitalWrite(RELAY, LOW);
-  //input
-  pinMode(BUTTON1, INPUT);
+// ethernet mac address - must be unique on your network
+static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x31 };
 
+byte Ethernet::buffer[500]; // tcp/ip send and receive buffer
 
-  //serial
-  Serial.begin(9600);
-  while (!Serial) {
+const char page[] PROGMEM =
+"HTTP/1.0 503 Service Unavailable\r\n"
+"Content-Type: text/html\r\n"
+"Retry-After: 600\r\n"
+"\r\n"
+"<html>"
+  "<head><title>"
+    "Service Temporarily Unavailable"
+  "</title></head>"
+  "<body>"
+    "<h3>This service is currently unavailable</h3>"
+    "<p><em>"
+      "The main server is currently off-line.<br />"
+      "Please try again later."
+    "</em></p>"
+  "</body>"
+"</html>"
+;
 
-    ; // wait for serial port to connect. Needed for native USB port only
+void setup(){
+  Serial.begin(57600);
+  Serial.println("\n[backSoon]");
+  
+  if (ether.begin(sizeof Ethernet::buffer, mymac) == 0) 
+    Serial.println( "Failed to access Ethernet controller");
+#if STATIC
+  ether.staticSetup(myip, gwip);
+#else
+  if (!ether.dhcpSetup())
+    Serial.println("DHCP failed");
+#endif
 
-  }
-  Serial.println("Setup...");
-
+  ether.printIp("IP:  ", ether.myip);
+  ether.printIp("GW:  ", ether.gwip);  
+  ether.printIp("DNS: ", ether.dnsip);  
 }
 
-void loop() {
-  //SERIAL
-  char incomingByte=0;
-  // reply only when you receive data:
-  if (Serial.available() > 0) {
-    // read the incoming byte:
-    incomingByte = Serial.read();
-
-    // say what you got:
-    Serial.print("I received: ");
-    Serial.println(incomingByte, DEC);
-    if (incomingByte == 'a') // a = off
-    {
-      led1State = !led1State;
-      Serial.println("LED1 state changed");
-    }
-    else if (incomingByte == 's') // s = on
-    {
-      led2State = !led2State;
-      Serial.println("LED2 state changed");
-    }
-    else if (incomingByte == 'r') // relay control
-    {
-      relayState = !relayState;
-      Serial.println("Relay state changed");
-    }
-       else if (incomingByte == 'd') // change 3 states
-    {
-      relayState = !relayState;
-      led1State = !led1State;
-      led2State = !led2State;
-      Serial.println("Changed LED1 LED2 RELAY");
-    }
-    else
-      Serial.println("Do Nothing");
-
+void loop(){
+  // wait for an incoming TCP packet, but ignore its contents
+  if (ether.packetLoop(ether.packetReceive())) {
+    memcpy_P(ether.tcpOffset(), page, sizeof page);
+    ether.httpServerReply(sizeof page - 1);
   }
-  // DEBOUNCE
-  int reading = digitalRead(BUTTON1);
-
-  // If the switch changed, due to noise or pressing:
-  if (reading != lastButtonState) {
-    // reset the debouncing timer
-    lastDebounceTime = millis();
-  }
-
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
-    if (reading != buttonState) {
-      buttonState = reading;
-
-      // only toggle the LED if the new button state is HIGH
-      if (buttonState == HIGH) {
-        led1State = !led1State;
-        led2State = !led2State;
-        relayState = !relayState;
-        Serial.println("Button pressed");
-      }
-    }
-  }
-
-  // set the LED:
-  digitalWrite(LED1, led1State);
-  digitalWrite(LED2, led2State);
-  digitalWrite(RELAY,relayState);
-
-  // save the reading. Next time through the loop, it'll be the lastButtonState:
-  lastButtonState = reading;
 }
-
