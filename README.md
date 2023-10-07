@@ -33,7 +33,7 @@ Documentation &rarr; [Arduino UNO R3](https://docs.arduino.cc/hardware/uno-rev3)
 
 Tutorials &rarr; [Built-in Examples](https://docs.arduino.cc/built-in-examples/)
 
-Configuring Visual Studio with [PlatformIO Extension](https://platformio.org/install/ide?install=vscode). Remember to set the **platform.ini** file with:
+Configuring Visual Studio with [PlatformIO Extension](https://platformio.org/install/ide?install=vscode). Remember to set the `platform.ini` file with:
 ```
 [env:uno]
 platform = atmelavr
@@ -474,11 +474,11 @@ Serial.println(F("Hello World"));
 ```
 [Here](https://playground.arduino.cc/Learning/Memory/) you can read more about it.
 
-When we use the standard ```Serial.print()``` it uses the SRAM for the string, so with a few prints and the SRAM is full (we only have *2kB* of SRAM). Using the ```F()``` or the ```PSTR()``` it stores the string inside the FLASH memory (*32kB*), thus saving the SRAM space.
+When we use the standard `Serial.print()` it uses the SRAM for the string, so with a few prints and the SRAM is full (we only have *2kB* of SRAM). Using the `F()` or the `PSTR()` it stores the string inside the FLASH memory (*32kB*), thus saving the SRAM space.
 
 
 ## Ethernet
-For this next examples you will need the **ENC28J60** ethernet module.
+For this next examples you will need the `ENC28J60` ethernet module.
 
 <img src=assets/ENC28J60.jpg width="30%" />
 
@@ -493,7 +493,7 @@ framework = arduino
 lib_deps = uipethernet/UIPEthernet@^2.0.12
 ```
 
-For this example we will use the **UIPEthernet.h**
+For this example we will use the `UIPEthernet.h`
 
 ```
 #include <Arduino.h>
