@@ -1,2 +1,2 @@
-# Button Blinky
-Press the Button to turn both LEDs ON/OFF
+# Millis Blink 
+This is the branch that blink LEDs using the millis() function
